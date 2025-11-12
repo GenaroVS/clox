@@ -69,7 +69,21 @@ void writeLines(Lines* lines, int line) {
         lines->line[lines->count + 1] = 1;
         lines->count += 2;
     }   
-    printLines(lines);
+}
+
+void writeConstant(Chunk* chunk, Value value, int line) {
+    int i = addConstant(chunk, value);
+    if (chunk->constants.count >= 256) {
+        printf("Value: %4d\n", i);
+        writeChunk(chunk, OP_CONSTANT_L, line);
+        writeChunk(chunk, getBytePart(i, 1), line);
+        writeChunk(chunk, getBytePart(i, 2), line);
+        writeChunk(chunk, getBytePart(i, 3), line);
+        printf("\n");
+    } else {
+        writeChunk(chunk, OP_CONSTANT, line);
+        writeChunk(chunk, i, line);
+    }
 }
 
 int addConstant(Chunk* chunk, Value value) {

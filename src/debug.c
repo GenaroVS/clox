@@ -16,6 +16,14 @@ static int constantInstruction(const char* name, Chunk* chunk, int offset) {
     return offset + 2;
 }
 
+static int constantLongInstruction(const char* name, Chunk* chunk, int offset) {
+    int constantOffset = packBytes(chunk->code, chunk->count, offset + 1, offset + 3);
+    printf("%-16s %4d '", name, constantOffset);
+    printValue(chunk->constants.values[constantOffset]);
+    printf("'\n");
+    return offset + 4;
+}
+
 void disassembleChunk(Chunk* chunk, const char* name) {
     printf("== %s ==\n", name);
 
@@ -41,6 +49,8 @@ int disassembleInstruction(Chunk* chunk, int offset) {
             return simpleInstruction("OP_RETURN", offset);
         case OP_CONSTANT:
             return constantInstruction("OP_CONSTANT", chunk, offset);
+        case OP_CONSTANT_L:
+            return constantLongInstruction("OP_CONSTANT_L", chunk, offset);
         default:
             printf("Unknown OpCode %d\n", instruction);
             return offset + 1;

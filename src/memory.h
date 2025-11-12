@@ -15,4 +15,7 @@
 
 void* reallocate(void* pointer, size_t oldSize, size_t newSize);
 
+uint8_t getBytePart(int val, uint8_t part);
+int packBytes(uint8_t* bytes, size_t size, size_t start, size_t end);
+
 #endif

@@ -30,6 +30,12 @@ static InterpretRes run() {
 
 #define READ_BYTE() (*vm.ip++)
 #define READ_CONSTANT() (vm.chunk->constants.values[READ_BYTE()]);
+#define BINARY_OP(op) \
+    do {              \
+        double right = pop(); \
+        double left = pop();  \
+        push(left op right);  \
+    } while(false)
 
     for (;;) {
 #ifdef DEBUG_TRACE_EXECUTION
@@ -47,6 +53,7 @@ static InterpretRes run() {
             case OP_RETURN: {
                 printValue(pop());
                 printf("\n");
+                break;
             }
             case OP_CONSTANT: {
                 Value constant = READ_CONSTANT();
@@ -57,19 +64,37 @@ static InterpretRes run() {
                 int offset = pack24int(READ_BYTE(), READ_BYTE(), READ_BYTE());
                 Value constant = vm.chunk->constants.values[offset];
                 push(constant);
+                break;
             }
             case OP_NEGATE: {
                 push(-pop());
                 break;
             }
+            case OP_ADD: {
+                BINARY_OP(+);
+                break;
+            }
+            case OP_SUB: {
+                BINARY_OP(-);
+                break;
+            }
+            case OP_MULT: {
+                BINARY_OP(*);
+                break;
+            }
+            case OP_DIV: {
+                BINARY_OP(/);
+                break;
+            }
         }
-        if (vm.ip - vm.chunk->code >= vm.chunk->count) {
+        if (vm.ip >= &(vm.chunk->code[vm.chunk->count])) {
             return INTERPRET_OK;
         }
     }
 
 #undef READ_BYTE
 #undef READ_CONSTANT
+#undef BINARY_OP 
 }
 
 InterpretRes vm_interpret(Chunk* chunk) {

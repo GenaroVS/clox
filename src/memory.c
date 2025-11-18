@@ -33,3 +33,11 @@ int packBytes(uint8_t* bytes, size_t size, size_t start, size_t end) {
     }
     return val;
 }
+
+int pack24int(uint8_t byte1, uint8_t byte2, uint8_t byte3) {
+    int val = 0;
+    val = (int) ((val | byte3) << 16); 
+    val = (int) ((val | byte2) << 8); 
+    val = (int) (val | byte1);
+    return val;
+}

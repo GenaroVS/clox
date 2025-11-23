@@ -1,5 +1,6 @@
 #include "common.h"
 #include "vm.h"
+#include "compiler.h"
 #include "memory.h"
 #include "debug.h"
 
@@ -106,6 +107,11 @@ static InterpretRes run() {
 #undef READ_BYTE
 #undef READ_CONSTANT
 #undef BINARY_OP 
+}
+
+InterpretRes interpret(const char* source) {
+    compile(source);
+    return INTERPRET_OK;
 }
 
 InterpretRes vm_interpret(Chunk* chunk) {

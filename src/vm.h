@@ -18,6 +18,7 @@ typedef enum {
 } InterpretRes;
 
 void initVM();
+InterpretRes interpret(const char* source);
 void freeVM();
 InterpretRes vm_interpret(Chunk* chunk);
 

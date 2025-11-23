@@ -3,6 +3,13 @@
 #include "memory.h"
 #include "values.h"
 
+void initValueArrayOfCapacity(ValueArray* array, int init_capacity) {
+    array->capacity = init_capacity;
+    array->values = GROW_ARRAY(Value, array->values,
+        0, array->capacity);
+    array->count = 0;
+}
+
 void initValueArray(ValueArray* array) {
     array->values = NULL;
     array->capacity = 0;

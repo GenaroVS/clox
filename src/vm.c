@@ -5,20 +5,31 @@
 
 VM vm; 
 
+#define VM_STACK_TOP vm.stack.values[vm.stack.count]
+
 void resetStack() {
-    vm.stackTop = vm.stack;
+    vm.stack.count = 0;
 }
 
 static void push(Value val) {
-    *vm.stackTop = val;
-    vm.stackTop++;
+    ValueArray* array = &vm.stack;
+    if (array->capacity < array->count + 1) {
+        int oldCapacity = array->capacity;
+        array->capacity = GROW_CAPACITY(oldCapacity);
+        array->values = GROW_ARRAY(Value, array->values,
+                oldCapacity, array->capacity);
+    }
+    VM_STACK_TOP = val;
+    array->count++;
 }
 
 static Value pop() {
-    return *(--vm.stackTop);
+    vm.stack.count--;
+    return VM_STACK_TOP;
 }
 
 void initVM() {
+    initValueArrayOfCapacity(&vm.stack, INIT_SIZE);
     resetStack();
 }
 
@@ -40,7 +51,7 @@ static InterpretRes run() {
     for (;;) {
 #ifdef DEBUG_TRACE_EXECUTION
         printf("        ");
-        for (Value* pos = vm.stack; pos < vm.stackTop; pos++) {
+        for (Value* pos = vm.stack.values; pos < vm.stack.values + vm.stack.count; pos++) {
             printf("[ ");
             printValue(*pos);
             printf(" ]");
@@ -67,7 +78,7 @@ static InterpretRes run() {
                 break;
             }
             case OP_NEGATE: {
-                push(-pop());
+                VM_STACK_TOP = -VM_STACK_TOP;
                 break;
             }
             case OP_ADD: {

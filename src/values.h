@@ -11,6 +11,7 @@ typedef struct {
     Value* values;
 } ValueArray;
 
+void initValueArrayOfCapacity(ValueArray* array, int init_capacity);
 void initValueArray(ValueArray* array);
 void writeValueArray(ValueArray* array, Value value);
 void freeValueArray(ValueArray* array);
